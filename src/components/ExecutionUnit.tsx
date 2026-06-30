@@ -1,6 +1,7 @@
 import Accordion from "@exabyte-io/cove.js/dist/mui/components/accordion";
 const AccordionComponent = Accordion as any;
 import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
+import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
 import { type NameResultSchema, safeMakeObject } from "@mat3ra/code/dist/js/utils/object";
 import type { ExecutionUnitSchema, RuntimeItemSchema } from "@mat3ra/esse/dist/js/types";
 import { type OrderedMaterial, ExecutionUnit as ExecutionUnitEntity } from "@mat3ra/wode";
@@ -12,7 +13,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { UnitPointerField } from "@mat3ra/workflow-designer";
 import { Application } from "./Application";
@@ -183,13 +184,45 @@ export function ExecutionUnit({
         [unit, onUpdate],
     );
 
-    const onPreviewClick = useCallback((tabId: string) => {
-        refreshCodeMirror(tabId);
-    }, []);
+    const onPreviewClick = useCallback(
+        (tabId: string, inputIndex: number) => {
+            refreshCodeMirror(tabId);
+            if (!renderingContext) return;
+            const inputRow = unit.input[inputIndex];
+            if (!inputRow) return;
+            try {
+                const rendered = renderTextWithSubstitutes(
+                    inputRow.template.content,
+                    renderingContext,
+                );
+                onUnitInputRenderedUpdate(inputIndex, rendered);
+            } catch (error) {
+                console.warn("Template render error:", error);
+            }
+        },
+        [renderingContext, unit, onUnitInputRenderedUpdate],
+    );
+    // Re-render all input templates whenever the rendering context changes
+    useEffect(() => {
+        if (!renderingContext) return;
+        unit.input.forEach((inputRow: ExecutionUnitInput, index: number) => {
+            try {
+                const rendered = renderTextWithSubstitutes(
+                    inputRow.template.content,
+                    renderingContext,
+                );
+                onUnitInputRenderedUpdate(index, rendered);
+            } catch (error) {
+                console.warn(`Template render error for input[${index}]:`, error);
+            }
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [renderingContext]);
 
     const onTemplateClick = useCallback((tabId: string) => {
         refreshCodeMirror(tabId);
     }, []);
+
 
     const setActiveTab = useCallback((next: number) => {
         setExecutionFileActiveTabIndex(0);

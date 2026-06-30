@@ -19,7 +19,7 @@ type ExecutionUnitInputFilePanelProps = {
     activeInnerTabIndex: number;
     onInnerTabChange: (tabIndex: number) => void;
     onTemplateTabClick: (tabId: string) => void;
-    onPreviewTabClick: (tabId: string) => void;
+    onPreviewTabClick: (tabId: string, inputIndex: number) => void;
     onContentUpdate: (content: string) => void;
     onRenderedUpdate: (content: string) => void;
     renderedContent: string;
@@ -71,7 +71,7 @@ export function ExecutionUnitInputFilePanel({
             iconCls: input.isManuallyChanged ? "actions.edit" : "",
             onClick: () => {
                 onInnerTabChange(1);
-                onPreviewTabClick(previewTabIdString);
+                onPreviewTabClick(previewTabIdString, index);
             },
             dataName: previewTabIdString,
         },
