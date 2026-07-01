@@ -72,6 +72,11 @@ export default defineConfig({
     resolve: {
         dedupe: ["@mat3ra/esse", "@mui/material", "@mui/styles", "@emotion/react", "@emotion/styled"],
         alias: [
+            // Resolve node-polyfills shims from local node_modules absolute path
+            {
+                find: /^vite-plugin-node-polyfills\/shims\/(.*)$/,
+                replacement: path.resolve(__dirname, "node_modules/vite-plugin-node-polyfills/shims/$1"),
+            },
             // Stub Meteor-only paths
             {
                 find: /^\/imports\/(.*)$/,
