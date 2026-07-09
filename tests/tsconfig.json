@@ -1,0 +1,17 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@mat3ra/prode": ["../node_modules/@mat3ra/prode"],
+            "@mat3ra/prode/*": ["../node_modules/@mat3ra/prode/*"],
+            "@mat3ra/*": ["../src/typings.d.ts"],
+            "/imports/*": ["../src/typings.d.ts"],
+            "meteor/*": ["../src/typings.d.ts"]
+        },
+        "rootDir": ".."
+    },
+    "include": [
+        "./**/*",
+        "../src/**/*"
+    ]
+}
