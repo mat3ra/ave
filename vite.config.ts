@@ -5,6 +5,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 /**
  * Vite config for the ave standalone demo app.
+ *
  * This is ONLY used for local development (`npm run dev`).
  * The library build (tsc) ignores this file entirely.
  */
