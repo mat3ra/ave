@@ -4,7 +4,7 @@ import {
     getUUID,
     refreshCodeMirror,
 } from "@mat3ra/code/dist/js/utils";
-import { ConvergencesList } from "@mat3ra/prove";
+
 import { ExecutionUnit } from "@mat3ra/wode";
 import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
@@ -65,6 +65,12 @@ export type ExecutionUnitViewerProps = {
     jobProperties: readonly JobPropertyForMonitors[];
     /** Current job ID; used for Jupyter URL resolution and monitor filtering. Pass from route context in webapp; omit in standalone. */
     jobId?: string;
+    /** Injected component for rendering convergence charts. */
+    ConvergencesListComponent?: React.ComponentType<{
+        monitors: { name: string }[];
+        idPrefix: string;
+        idGenerator: () => string;
+    }>;
 };
 
 function inputFileDisplayName(file: ExecutionUnitInputRow): string {
@@ -97,7 +103,7 @@ function renderExecutionFile(
 }
 
 export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
-    const { unit, onOutputUpdateRequest, jobProperties, jobId } = props;
+    const { unit, onOutputUpdateRequest, jobProperties, jobId, ConvergencesListComponent } = props;
     const [activeTabId, setActiveTabId] = useState("output");
     const [activeFileTabIndex, setActiveFileTabIndex] = useState(0);
 
@@ -240,12 +246,12 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 </Stack>
             ) : null}
 
-            {hasConvergenceMonitor && activeTabIndex === 2 ? (
+            {hasConvergenceMonitor && ConvergencesListComponent && activeTabIndex === 2 ? (
                 <Stack
                     overflow="hidden"
                     className={getActiveClassByTab("charts")}
                     id={`${unit.flowchartId}-charts`}>
-                    <ConvergencesList
+                    <ConvergencesListComponent
                         monitors={monitors}
                         idPrefix={unit.flowchartId}
                         idGenerator={getUUID}
