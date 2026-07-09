@@ -1,7 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import CodeMirror from "@exabyte-io/cove.js/dist/other/codemirror";
 import { getProgrammingLanguageFromFileExtension, getUUID, refreshCodeMirror, } from "@mat3ra/code/dist/js/utils";
-import { ConvergencesList } from "@mat3ra/prove";
 import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -39,7 +38,7 @@ function renderExecutionFile(tabId, file, isActive) {
     return (_jsx(Box, { id: String(tabId), className: setClass(isActive ? "active" : "hidden"), children: _jsx(CodeMirror, { content: file.rendered, language: language, options: options, readOnly: true }) }, String(tabId)));
 }
 export function ExecutionUnitViewer(props) {
-    const { unit, onOutputUpdateRequest, jobProperties, jobId } = props;
+    const { unit, onOutputUpdateRequest, jobProperties, jobId, ConvergencesListComponent } = props;
     const [activeTabId, setActiveTabId] = useState("output");
     const [activeFileTabIndex, setActiveFileTabIndex] = useState(0);
     const UnitOutputComponent = useMemo(() => {
@@ -131,5 +130,5 @@ export function ExecutionUnitViewer(props) {
                                 itemName: "Stdout",
                                 href: `#${unit.flowchartId}-output-stdout`,
                             },
-                        ], variant: "fullWidth", activeTabIndex: 0, centered: true }), _jsx(UnitOutputComponent, { id: `${unit.flowchartId}-output-stdout`, unit: unit, onOutputUpdateRequest: onOutputUpdateRequest })] })) : null, hasConvergenceMonitor && activeTabIndex === 2 ? (_jsx(Stack, { overflow: "hidden", className: getActiveClassByTab("charts"), id: `${unit.flowchartId}-charts`, children: _jsx(ConvergencesList, { monitors: monitors, idPrefix: unit.flowchartId, idGenerator: getUUID }) })) : null] }));
+                        ], variant: "fullWidth", activeTabIndex: 0, centered: true }), _jsx(UnitOutputComponent, { id: `${unit.flowchartId}-output-stdout`, unit: unit, onOutputUpdateRequest: onOutputUpdateRequest })] })) : null, hasConvergenceMonitor && ConvergencesListComponent && activeTabIndex === 2 ? (_jsx(Stack, { overflow: "hidden", className: getActiveClassByTab("charts"), id: `${unit.flowchartId}-charts`, children: _jsx(ConvergencesListComponent, { monitors: monitors, idPrefix: unit.flowchartId, idGenerator: getUUID }) })) : null] }));
 }

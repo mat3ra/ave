@@ -15,7 +15,6 @@ import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { UnitPointerField } from "@mat3ra/workflow-designer";
 import { Application } from "./Application";
 import {
     type ExecutionUnitInput,
@@ -32,7 +31,6 @@ import {
 
 import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
 import type { ExecutableSchema, FlavorSchema } from "@mat3ra/esse/dist/js/types";
-import { UnitDetails } from "@mat3ra/workflow-designer";
 
 
 export type ExecutionUnitProps = {
@@ -46,6 +44,22 @@ export type ExecutionUnitProps = {
     materialsIndex?: number;
     onMaterialSwitch?: (index: number) => void;
     units?: AnySubworkflowUnit[];
+    /** Injected component for unit flow pointer fields (e.g. "next" unit selector). */
+    UnitPointerFieldComponent?: React.ComponentType<{
+        label: string;
+        selectedValue: string;
+        availableUnits: AnySubworkflowUnit[];
+        onChange: (value: string) => void;
+    }>;
+    /** Injected component for unit details (results, monitors, post-processors). */
+    UnitDetailsComponent?: React.ComponentType<{
+        unit: ExecutionUnitSchema;
+        editable?: boolean;
+        onUnitResultsChanged: (results: NameResultSchema[]) => void;
+        onUnitIsDraftChanged: (isDraft: boolean) => void;
+        onUnitMonitorChanged: (monitor: string, enabled: boolean) => void;
+        onUnitPostProcessorChanged: (postProcessor: string, enabled: boolean) => void;
+    }>;
 };
 
 const unitPointerKeys = ["next"] as const;
@@ -65,6 +79,8 @@ export function ExecutionUnit({
     materialsIndex,
     onMaterialSwitch,
     units = [],
+    UnitPointerFieldComponent,
+    UnitDetailsComponent,
 }: ExecutionUnitProps) {
     const [drawerContent, setDrawerContent] = useState<"context" | "materialList">("context");
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -258,8 +274,8 @@ export function ExecutionUnit({
     return (
         <Stack spacing={2} className="ExecutionUnit" sx={{ py: 2 }}>
             <Stack className="ExecutionUnit-Stack" direction="column" spacing={2}>
-                {unitPointerKeys.map((key) => (
-                    <UnitPointerField
+                {UnitPointerFieldComponent && unitPointerKeys.map((key) => (
+                    <UnitPointerFieldComponent
                         key={key}
                         label={key}
                         selectedValue={unit[key] ?? ""}
@@ -286,14 +302,16 @@ export function ExecutionUnit({
                         isExecEditable={editable}
                         isFlavorEditable={editable}
                     />
-                    <UnitDetails
-                        unit={unit}
-                        editable={editable}
-                        onUnitResultsChanged={onUnitResultsChanged}
-                        onUnitIsDraftChanged={onUnitIsDraftChanged}
-                        onUnitMonitorChanged={onUnitMonitorChanged}
-                        onUnitPostProcessorChanged={onUnitPostProcessorChanged}
-                    />
+                    {UnitDetailsComponent && (
+                        <UnitDetailsComponent
+                            unit={unit}
+                            editable={editable}
+                            onUnitResultsChanged={onUnitResultsChanged}
+                            onUnitIsDraftChanged={onUnitIsDraftChanged}
+                            onUnitMonitorChanged={onUnitMonitorChanged}
+                            onUnitPostProcessorChanged={onUnitPostProcessorChanged}
+                        />
+                    )}
                 </Stack>
             </AccordionComponent>
             <AccordionComponent
