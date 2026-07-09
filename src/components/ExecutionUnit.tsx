@@ -339,7 +339,7 @@ export function ExecutionUnit({
                                 onRenderedUpdate={(content) =>
                                     onUnitInputRenderedUpdate(index, content)
                                 }
-                                renderedContent={inputRow.rendered}
+                                renderedContent={inputRow.rendered ?? ""}
                                 lineWrapping={lineWrapping}
                                 adjustable={adjustable}
                                 isStandalone={isStandalone}

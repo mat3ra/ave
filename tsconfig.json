@@ -1,8 +1,5 @@
 {
     "extends": "@mat3ra/tsconfig/tsconfig-react-jsx.json",
-    "compilerOptions": {
-        "strict": false
-    },
     "exclude": [
         "src/standalone/**/*"
     ]

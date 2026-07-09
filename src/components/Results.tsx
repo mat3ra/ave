@@ -37,7 +37,7 @@ export function Results({
                             <CheckboxComponent
                                 label={result.name}
                                 checked={selected.includes(result.name)}
-                                onChange={(checked) => {
+                                onChange={(checked: boolean) => {
                                     onChange(result, checked);
                                 }}
                             />
