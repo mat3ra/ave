@@ -11,4 +11,3 @@ export interface ResultsProps {
     children?: React.ReactNode;
 }
 export declare function Results({ className, data_tid, children, allowed, selected, onChange, }: ResultsProps): React.JSX.Element;
-//# sourceMappingURL=Results.d.ts.map

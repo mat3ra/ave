@@ -15,4 +15,3 @@ export type ApplicationProps = {
     isFlavorEditable?: boolean;
 };
 export declare function Application({ onApplicationUpdate, onExecutableUpdate, onFlavorUpdate, showExec, className: propsClassName, application, editable, executable, isExecEditable, showFlavor, flavor, isFlavorEditable, }: ApplicationProps): React.JSX.Element;
-//# sourceMappingURL=Application.d.ts.map

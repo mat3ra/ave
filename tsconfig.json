@@ -1,53 +1,8 @@
 {
     "extends": "@mat3ra/tsconfig/tsconfig-react-jsx.json",
     "compilerOptions": {
-        "baseUrl": ".",
-        "outDir": "dist",
-        "rootDir": "src",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "declaration": true,
-        "declarationMap": true,
-        "skipLibCheck": true,
-        "strict": false,
-        "noImplicitAny": false,
-        "strictNullChecks": false,
-        "strictFunctionTypes": false,
-        "strictBindCallApply": false,
-        "strictPropertyInitialization": false,
-        "noImplicitThis": false,
-        "alwaysStrict": false,
-        "paths": {
-            "@mat3ra/wode": [
-                "node_modules/@mat3ra/wode"
-            ],
-            "@mat3ra/wode/*": [
-                "node_modules/@mat3ra/wode/*"
-            ],
-            "@mat3ra/esse": [
-                "node_modules/@mat3ra/esse"
-            ],
-            "@mat3ra/esse/*": [
-                "node_modules/@mat3ra/esse/*"
-            ],
-            "@mat3ra/code": [
-                "node_modules/@mat3ra/code"
-            ],
-            "@mat3ra/code/*": [
-                "node_modules/@mat3ra/code/*"
-            ],
-            "@mat3ra/standata": [
-                "node_modules/@mat3ra/standata"
-            ],
-            "@mat3ra/standata/*": [
-                "node_modules/@mat3ra/standata/*"
-            ]
-        }
+        "strict": false
     },
-    "include": [
-        "src/**/*"
-    ],
     "exclude": [
         "src/standalone/**/*"
     ]
