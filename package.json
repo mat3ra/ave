@@ -2,6 +2,14 @@
     "name": "@mat3ra/ave",
     "version": "0.0.0",
     "description": "Application Viewer and Editor",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mat3ra/ave.git"
+    },
+    "bugs": {
+        "url": "https://github.com/mat3ra/ave/issues"
+    },
+    "homepage": "https://github.com/mat3ra/ave",
     "main": "dist/exports.js",
     "types": "dist/exports.d.ts",
     "files": [
@@ -15,12 +23,19 @@
         "build": "tsc && npm run copy-css",
         "copy-css": "mkdir -p dist/stylesheets && cp src/stylesheets/* dist/stylesheets/ 2>/dev/null || true",
         "transpile": "tsc",
-        "test": "TSX_TSCONFIG_PATH=tests/tsconfig.json node --import tsx --test tests/*.tests.ts"
+        "test": "TSX_TSCONFIG_PATH=tests/tsconfig.json node --import tsx --test tests/*.tests.ts",
+        "lint": "eslint src tests && prettier --check src tests"
     },
     "dependencies": {
         "@mat3ra/ade": "*"
     },
     "peerDependencies": {
+        "@mat3ra/code": "*",
+        "@mat3ra/esse": "*",
+        "@mat3ra/prode": "*",
+        "@mat3ra/prove": "*",
+        "@mat3ra/standata": "*",
+        "@mat3ra/wode": "*",
         "react": "^17.0.0",
         "react-dom": "^17.0.0"
     },
@@ -45,14 +60,16 @@
         "@rjsf/utils": "^5.1.0",
         "@rjsf/mui": "^5.1.0",
         "@rjsf/validator-ajv8": "^5.1.0",
-        "@exabyte-io/cove.js": "2026.5.28-0",
+        "@exabyte-io/cove.js": "2026.7.9-0",
         "@exabyte-io/wave.js": "2026.6.22-0",
         "@mat3ra/esse": "2026.6.16-0",
         "@mat3ra/ade": "2026.5.29-0",
         "@mat3ra/code": "2026.5.27-0",
         "@mat3ra/mode": "2026.5.28-0",
-        "@mat3ra/wode": "2026.6.19-0",
+        "@mat3ra/wode": "2026.7.9-0",
         "@mat3ra/standata": "2026.6.12-1",
+        "@mat3ra/prode": "2026.6.12-0",
+        "@mat3ra/prove": "2026.6.12-0",
         "reactflow": "^11.7.2",
         "@types/lodash": "^4.14.202"
     }
