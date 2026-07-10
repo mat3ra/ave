@@ -118,7 +118,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
     const monitors = getMonitorsFromProperties(unit, jobProperties, jobId);
 
     const fileTabs: TabItem[] = [];
-    unit.input.forEach((file, index) => {
+    unit.input.forEach((file: ExecutionUnitInputRow, index: number) => {
         const tabId = `preview-${index}`;
         fileTabs.push({
             id: "input",
@@ -213,7 +213,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 id={`${unit.flowchartId}-input`}>
                 <TabsMenu tabs={fileTabs} activeTabIndex={activeFileTabIndex} />
                 <Box overflow="auto" flex={1}>
-                    {unit.input.map((file, index) => {
+                    {unit.input.map((file: ExecutionUnitInputRow, index: number) => {
                         const isActive = index === activeFileTabIndex;
                         return renderExecutionFile(index, file, isActive);
                     })}

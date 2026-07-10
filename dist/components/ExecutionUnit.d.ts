@@ -32,4 +32,3 @@ export type ExecutionUnitProps = {
     }>;
 };
 export declare function ExecutionUnit({ unit, renderingContext, onUpdate, adjustable, editable, isStandalone, materials, materialsIndex, onMaterialSwitch, units, UnitPointerFieldComponent, UnitDetailsComponent, }: ExecutionUnitProps): React.JSX.Element;
-//# sourceMappingURL=ExecutionUnit.d.ts.map

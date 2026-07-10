@@ -223,7 +223,7 @@ export function Application({
         }
     };
 
-    const handleExecutableSelect = (e) => {
+    const handleExecutableSelect = (e: SelectChangeEvent<string | string[]>) => {
         onExecutableSelect(selectSingleValueFromCoveSelect(e));
     };
 

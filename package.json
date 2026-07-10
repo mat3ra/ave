@@ -41,7 +41,7 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "@exabyte-io/cove.js": "2026.7.9-0",
+        "@exabyte-io/cove.js": "2026.7.9-1",
         "@emotion/babel-plugin": "^11.11.0",
         "@emotion/react": "^11.11.0",
         "@emotion/styled": "^11.11.0",

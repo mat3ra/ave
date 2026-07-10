@@ -27,4 +27,3 @@ export declare function DrawerContent({ open, title, className, children, ...res
 export type SideDrawerIconProps = React.ComponentPropsWithoutRef<"div"> & ClassnameProps;
 export declare function Icon({ className, style, ...rest }: SideDrawerIconProps): React.JSX.Element;
 export {};
-//# sourceMappingURL=SideDrawer.d.ts.map
