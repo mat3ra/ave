@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import CodeMirror from "@mat3ra/cove.js/dist/other/codemirror";
+import CodeMirror from "@mat3ra/cove/dist/other/codemirror";
 import { getProgrammingLanguageFromFileExtension, getUUID, refreshCodeMirror, } from "@mat3ra/code/dist/js/utils";
 import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
@@ -9,7 +9,7 @@ import { useMemo, useState } from "react";
 import { executionUnitHasConvergenceMonitor } from "../utils/executionUnitMonitors";
 import { isJupyterExecutionUnit, resolveJupyterNotebookAndLabUrls, } from "../utils/jupyterExecutionUnit";
 import { UnitOutput } from "./UnitOutput";
-import TabsMenu from "@mat3ra/cove.js/dist/mui/components/tabs/TabsMenu";
+import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
 function getMonitorsFromProperties(unit, jobProperties, jobId) {
     if (!jobProperties || !Array.isArray(jobProperties) || !jobId) {
         return [];
