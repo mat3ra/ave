@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import Checkbox from "@exabyte-io/cove.js/dist/mui/components/checkbox/Checkbox";
+import Checkbox from "@mat3ra/cove/dist/mui/components/checkbox/Checkbox";
 const CheckboxComponent = Checkbox;
 import Grid from "@mui/material/Grid";
 export function Results({ className = "", data_tid, children, allowed = [], selected = [], onChange, }) {

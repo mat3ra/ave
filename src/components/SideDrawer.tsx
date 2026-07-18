@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import IconByName from "@exabyte-io/cove.js/dist/mui/components/icon/IconByName";
+import IconByName from "@mat3ra/cove/dist/mui/components/icon/IconByName";
 import type { ButtonProps } from "@mui/material/Button";
 import Button from "@mui/material/Button";
 import type { DrawerProps } from "@mui/material/Drawer";

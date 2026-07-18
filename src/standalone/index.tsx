@@ -1,4 +1,4 @@
-import ThemeProvider from "@exabyte-io/cove.js/dist/theme/provider/ThemeProvider";
+import ThemeProvider from "@mat3ra/cove/dist/theme/provider/ThemeProvider";
 import JSONSchemasInterface from "@mat3ra/esse/dist/js/esse/JSONSchemasInterface";
 import esseSchemas from "@mat3ra/esse/dist/js/schemas.json";
 import type { JSONSchema7 } from "json-schema";

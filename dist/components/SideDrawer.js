@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 /* eslint-disable react/jsx-props-no-spreading */
-import IconByName from "@exabyte-io/cove.js/dist/mui/components/icon/IconByName";
+import IconByName from "@mat3ra/cove/dist/mui/components/icon/IconByName";
 import Button from "@mui/material/Button";
 import DrawerBase from "@mui/material/Drawer";
 const modalPaddingTopBottom = 16;

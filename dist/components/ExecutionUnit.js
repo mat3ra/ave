@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import Accordion from "@exabyte-io/cove.js/dist/mui/components/accordion";
+import Accordion from "@mat3ra/cove/dist/mui/components/accordion";
 const AccordionComponent = Accordion;
 import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
 import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Application } from "./Application";
 import { ExecutionUnitInputFilePanel, } from "./ExecutionUnitInputFilePanel";
 import { DrawerContainer, DrawerContent, DrawerControl, DrawerControlPanel, MainContent, SideDrawer, } from "./SideDrawer";
-import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
+import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
 const unitPointerKeys = ["next"];
 function runtimeItemToNameResult(item) {
     return typeof item === "string" ? safeMakeObject(item) : item;

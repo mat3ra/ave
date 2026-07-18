@@ -1,4 +1,4 @@
-import Accordion from "@exabyte-io/cove.js/dist/mui/components/accordion";
+import Accordion from "@mat3ra/cove/dist/mui/components/accordion";
 const AccordionComponent = Accordion as any;
 import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
 import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
@@ -29,7 +29,7 @@ import {
     SideDrawer,
 } from "./SideDrawer";
 
-import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
+import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
 import type { ExecutableSchema, FlavorSchema } from "@mat3ra/esse/dist/js/types";
 
 
