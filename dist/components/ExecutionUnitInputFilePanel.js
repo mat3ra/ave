@@ -1,8 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import CodeMirror from "@exabyte-io/cove.js/dist/other/codemirror";
+import CodeMirror from "@mat3ra/cove.js/dist/other/codemirror";
 import { getProgrammingLanguageFromFileExtension } from "@mat3ra/code/dist/js/utils";
 import Stack from "@mui/material/Stack";
-import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
+import TabsMenu from "@mat3ra/cove.js/dist/mui/components/tabs/TabsMenu";
 const codeMirrorDefaults = {
     lineNumbers: true,
     mode: "jinja2",

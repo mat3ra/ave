@@ -1,4 +1,4 @@
-import Select from "@exabyte-io/cove.js/dist/mui/components/select";
+import Select from "@mat3ra/cove.js/dist/mui/components/select";
 import type {
     ApplicationSchema,
     ExecutableSchema,

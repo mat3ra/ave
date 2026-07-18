@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import Checkbox from "@exabyte-io/cove.js/dist/mui/components/checkbox/Checkbox";
+import Checkbox from "@mat3ra/cove.js/dist/mui/components/checkbox/Checkbox";
 const CheckboxComponent = Checkbox as any;
 import Grid from "@mui/material/Grid";
 import React from "react";

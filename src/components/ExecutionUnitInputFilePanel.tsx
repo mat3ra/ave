@@ -1,11 +1,11 @@
-import CodeMirror from "@exabyte-io/cove.js/dist/other/codemirror";
+import CodeMirror from "@mat3ra/cove.js/dist/other/codemirror";
 import { getProgrammingLanguageFromFileExtension } from "@mat3ra/code/dist/js/utils";
 import type { ExecutionUnitInputItemSchema } from "@mat3ra/esse/dist/js/types";
 import Stack from "@mui/material/Stack";
 import React from "react";
 
-import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
-import type { TabItem } from "@exabyte-io/cove.js/dist/mui/components/tabs/types";
+import TabsMenu from "@mat3ra/cove.js/dist/mui/components/tabs/TabsMenu";
+import type { TabItem } from "@mat3ra/cove.js/dist/mui/components/tabs/types";
 
 /** `input[]` row for an execution unit; optional `name` is set by `setInputItemNameByIndex` for tab labels. */
 export type ExecutionUnitInput = ExecutionUnitInputItemSchema & {

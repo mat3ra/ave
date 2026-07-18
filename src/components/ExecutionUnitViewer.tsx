@@ -1,4 +1,4 @@
-import CodeMirror from "@exabyte-io/cove.js/dist/other/codemirror";
+import CodeMirror from "@mat3ra/cove.js/dist/other/codemirror";
 import {
     getProgrammingLanguageFromFileExtension,
     getUUID,
@@ -20,8 +20,8 @@ import {
 } from "../utils/jupyterExecutionUnit";
 import { UnitOutput } from "./UnitOutput";
 
-import TabsMenu from "@exabyte-io/cove.js/dist/mui/components/tabs/TabsMenu";
-import type { TabItem } from "@exabyte-io/cove.js/dist/mui/components/tabs/types";
+import TabsMenu from "@mat3ra/cove.js/dist/mui/components/tabs/TabsMenu";
+import type { TabItem } from "@mat3ra/cove.js/dist/mui/components/tabs/types";
 
 type ExecutionUnitInstance = InstanceType<typeof ExecutionUnit>;
 

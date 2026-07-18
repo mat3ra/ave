@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import Select from "@exabyte-io/cove.js/dist/mui/components/select";
+import Select from "@mat3ra/cove.js/dist/mui/components/select";
 import { ApplicationRegistry } from "@mat3ra/standata";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
