@@ -227,7 +227,14 @@ export function ExecutionUnit({
                     inputRow.template.content,
                     renderingContext,
                 );
-                onUnitInputRenderedUpdate(index, rendered);
+                // Guard against re-writing unchanged content: onUnitInputRenderedUpdate
+                // always produces a new `unit` object, which can cause renderingContext to be
+                // recomputed upstream and re-fire this effect. Without this check, any input
+                // whose rendered output isn't referentially stable across renders (e.g. content
+                // that depends on values not stabilized elsewhere) causes an infinite update loop.
+                if (rendered !== inputRow.rendered) {
+                    onUnitInputRenderedUpdate(index, rendered);
+                }
             } catch (error) {
                 console.warn(`Template render error for input[${index}]:`, error);
             }
