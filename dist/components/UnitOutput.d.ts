@@ -11,7 +11,7 @@ export class UnitOutput extends React.Component<any, any, any> {
     scrollToBottom(): void;
     componentDidMount(): void;
     componentDidUpdate(): void;
-    timeOut: number;
+    timeOut: number | undefined;
     render(): React.JSX.Element;
     outputEl: unknown;
 }

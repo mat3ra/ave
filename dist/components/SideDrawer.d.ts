@@ -23,7 +23,7 @@ export type DrawerContentProps = {
     open?: boolean;
     title?: string;
 } & React.ComponentPropsWithoutRef<"div"> & ClassnameProps;
-export declare function DrawerContent({ open, title, className, children, ...rest }: DrawerContentProps): React.JSX.Element;
+export declare function DrawerContent({ open, title, className, children, ...rest }: DrawerContentProps): React.JSX.Element | null;
 export type SideDrawerIconProps = React.ComponentPropsWithoutRef<"div"> & ClassnameProps;
 export declare function Icon({ className, style, ...rest }: SideDrawerIconProps): React.JSX.Element;
 export {};
