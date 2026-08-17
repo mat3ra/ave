@@ -1,5 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import CodeMirror from "@mat3ra/cove/dist/other/codemirror";
+import Alert from "@mui/material/Alert";
 import { getProgrammingLanguageFromFileExtension } from "@mat3ra/code/dist/js/utils";
 import Stack from "@mui/material/Stack";
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
@@ -10,7 +11,7 @@ const codeMirrorDefaults = {
     viewportMargin: Infinity,
     minHeight: 70,
 };
-export function ExecutionUnitInputFilePanel({ index, input, isActive, activeInnerTabIndex, onInnerTabChange, onTemplateTabClick, onPreviewTabClick, onContentUpdate, onRenderedUpdate, renderedContent, lineWrapping, adjustable, isStandalone, }) {
+export function ExecutionUnitInputFilePanel({ index, input, isActive, activeInnerTabIndex, onInnerTabChange, onTemplateTabClick, onPreviewTabClick, onContentUpdate, onRenderedUpdate, renderedContent, lineWrapping, adjustable, isStandalone, issues = [], }) {
     const contentTabIdString = `template-${index}`;
     const previewTabIdString = `preview-${index}`;
     const fileTabs = [
@@ -35,7 +36,9 @@ export function ExecutionUnitInputFilePanel({ index, input, isActive, activeInne
             dataName: previewTabIdString,
         },
     ];
-    return (_jsxs(Stack, { display: isActive ? undefined : "none", spacing: 2, id: String(index), className: `ExecutionFile ${isActive ? "active" : ""}`, children: [_jsx(TabsMenu, { tabs: fileTabs, activeTabIndex: activeInnerTabIndex, sx: { fontSize: 12 } }), _jsx(Stack, { display: activeInnerTabIndex === 0 ? undefined : "none", spacing: 2, id: contentTabIdString, className: `ContentTabPane ${activeInnerTabIndex === 0 ? "active" : ""}`, children: _jsx(CodeMirror, { content: input.template.content, updateContent: onContentUpdate, language: getProgrammingLanguageFromFileExtension(input.template.name, "jinja2"), options: {
+    return (_jsxs(Stack, { display: isActive ? undefined : "none", spacing: 2, id: String(index), className: `ExecutionFile ${isActive ? "active" : ""}`, children: [_jsx(TabsMenu, { tabs: fileTabs, activeTabIndex: activeInnerTabIndex, sx: { fontSize: 12 } }), issues.length > 0 && (_jsx(Alert, { severity: "warning", "data-tid": "template-issues", sx: { py: 0.25 }, children: issues
+                    .map((issue) => `line ${issue.line}: ${issue.name}${issue.suggestion ? ` — did you mean ${issue.suggestion}?` : ""}`)
+                    .join("  ·  ") })), _jsx(Stack, { display: activeInnerTabIndex === 0 ? undefined : "none", spacing: 2, id: contentTabIdString, className: `ContentTabPane ${activeInnerTabIndex === 0 ? "active" : ""}`, children: _jsx(CodeMirror, { content: input.template.content, updateContent: onContentUpdate, language: getProgrammingLanguageFromFileExtension(input.template.name, "jinja2"), options: {
                         ...codeMirrorDefaults,
                         autoSave: true,
                         lineWrapping,

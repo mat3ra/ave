@@ -1,4 +1,5 @@
 import CodeMirror from "@mat3ra/cove/dist/other/codemirror";
+import Alert from "@mui/material/Alert";
 import { getProgrammingLanguageFromFileExtension } from "@mat3ra/code/dist/js/utils";
 import type { ExecutionUnitInputItemSchema } from "@mat3ra/esse/dist/js/types";
 import Stack from "@mui/material/Stack";
@@ -6,6 +7,7 @@ import React from "react";
 
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
 import type { TabItem } from "@mat3ra/cove/dist/mui/components/tabs/types";
+import type { TemplateIssue } from "../utils/templateVariables";
 
 /** `input[]` row for an execution unit; optional `name` is set by `setInputItemNameByIndex` for tab labels. */
 export type ExecutionUnitInput = ExecutionUnitInputItemSchema & {
@@ -26,6 +28,8 @@ type ExecutionUnitInputFilePanelProps = {
     lineWrapping: boolean;
     adjustable?: boolean;
     isStandalone?: boolean;
+    /** Variables in this template that will render to nothing. */
+    issues?: TemplateIssue[];
 };
 
 const codeMirrorDefaults: Record<string, unknown> = {
@@ -50,6 +54,7 @@ export function ExecutionUnitInputFilePanel({
     lineWrapping,
     adjustable,
     isStandalone,
+    issues = [],
 }: ExecutionUnitInputFilePanelProps) {
     const contentTabIdString = `template-${index}`;
     const previewTabIdString = `preview-${index}`;
@@ -84,6 +89,23 @@ export function ExecutionUnitInputFilePanel({
             id={String(index)}
             className={`ExecutionFile ${isActive ? "active" : ""}`}>
             <TabsMenu tabs={fileTabs} activeTabIndex={activeInnerTabIndex} sx={{ fontSize: 12 }} />
+            {/*
+                Named here rather than left to the preview: nunjucks renders an unknown variable
+                as the empty string, so the preview of a typo looks like a value that is simply
+                blank.
+            */}
+            {issues.length > 0 && (
+                <Alert severity="warning" data-tid="template-issues" sx={{ py: 0.25 }}>
+                    {issues
+                        .map(
+                            (issue) =>
+                                `line ${issue.line}: ${issue.name}${
+                                    issue.suggestion ? ` — did you mean ${issue.suggestion}?` : ""
+                                }`,
+                        )
+                        .join("  ·  ")}
+                </Alert>
+            )}
             <Stack
                 display={activeInnerTabIndex === 0 ? undefined : "none"}
                 spacing={2}

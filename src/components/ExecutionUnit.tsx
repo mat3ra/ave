@@ -13,13 +13,14 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Application } from "./Application";
 import {
     type ExecutionUnitInput,
     ExecutionUnitInputFilePanel,
 } from "./ExecutionUnitInputFilePanel";
+import { TemplateVariablesPanel } from "./TemplateVariablesPanel";
 import {
     DrawerContainer,
     DrawerContent,
@@ -30,6 +31,7 @@ import {
 } from "./SideDrawer";
 
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
+import { findUnresolvedVariables } from "../utils/templateVariables";
 import type { ExecutableSchema, FlavorSchema } from "@mat3ra/esse/dist/js/types";
 
 
@@ -51,6 +53,8 @@ export type ExecutionUnitProps = {
         availableUnits: AnySubworkflowUnit[];
         onChange: (value: string) => void;
     }>;
+    /** Labels for top-level rendering-context keys, when the host knows better than the default. */
+    variableOriginOverrides?: Record<string, string>;
     /** Injected component for unit details (results, monitors, post-processors). */
     UnitDetailsComponent?: React.ComponentType<{
         unit: ExecutionUnitSchema;
@@ -81,6 +85,7 @@ export function ExecutionUnit({
     units = [],
     UnitPointerFieldComponent,
     UnitDetailsComponent,
+    variableOriginOverrides,
 }: ExecutionUnitProps) {
     const [drawerContent, setDrawerContent] = useState<"context" | "materialList">("context");
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
@@ -261,6 +266,19 @@ export function ExecutionUnit({
         [unit, onUpdate],
     );
 
+    /**
+     * nunjucks substitutes an unknown variable with the empty string, so a typo does not fail —
+     * it quietly drops a value out of the input file. Checked per input so the warning can sit
+     * with the template it belongs to.
+     */
+    const issuesByInput = useMemo(
+        () =>
+            unit.input.map((inputRow: ExecutionUnitInput) =>
+                findUnresolvedVariables(inputRow.template?.content, renderingContext),
+            ),
+        [unit.input, renderingContext],
+    );
+
     const tabs = unit.input.map((inputRow: ExecutionUnitInput, index: number) => {
         const label = inputRow.template.name;
         return {
@@ -339,6 +357,7 @@ export function ExecutionUnit({
                                 lineWrapping={lineWrapping}
                                 adjustable={adjustable}
                                 isStandalone={isStandalone}
+                                issues={issuesByInput[index]}
                             />
                         ))}
                     </MainContent>
@@ -346,36 +365,32 @@ export function ExecutionUnit({
                         <DrawerControlPanel>
                             <DrawerControl
                                 isToggleAnchor
+                                data-tid="unit-drawer-toggle"
                                 onClick={() => setIsDrawerVisible((v) => !v)}
                                 icon={isDrawerVisible ? "shapes.arrow.right" : "shapes.arrow.left"}
                             />
                             <Divider />
                             <DrawerControl
                                 active={drawerContent === "context"}
+                                data-tid="unit-drawer-variables"
                                 onClick={() => setDrawerContent("context")}
                                 icon="pages.context"
                             />
                             <DrawerControl
                                 active={drawerContent === "materialList"}
+                                data-tid="unit-drawer-material"
                                 onClick={() => setDrawerContent("materialList")}
                                 icon="entities.material"
                             />
                         </DrawerControlPanel>
                         <DrawerContent
                             open={isDrawerVisible}
-                            title={drawerContent === "context" ? "Context" : "Material"}>
+                            title={drawerContent === "context" ? "Variables" : "Material"}>
                             {drawerContent === "context" && (
-                                <pre
-                                    className="visible-rendering-context"
-                                    style={{
-                                        whiteSpace: "pre-wrap",
-                                        margin: 0,
-                                        padding: 10,
-                                        minHeight: "100%",
-                                        border: "none",
-                                    }}>
-                                    {JSON.stringify(renderingContext ?? {}, null, "    ")}
-                                </pre>
+                                <TemplateVariablesPanel
+                                    renderingContext={renderingContext}
+                                    originOverrides={variableOriginOverrides}
+                                />
                             )}
                             {drawerContent === "materialList" && (
                                 <List key="material-label-ul">

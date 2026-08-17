@@ -21,6 +21,8 @@ export type ExecutionUnitProps = {
         availableUnits: AnySubworkflowUnit[];
         onChange: (value: string) => void;
     }>;
+    /** Labels for top-level rendering-context keys, when the host knows better than the default. */
+    variableOriginOverrides?: Record<string, string>;
     /** Injected component for unit details (results, monitors, post-processors). */
     UnitDetailsComponent?: React.ComponentType<{
         unit: ExecutionUnitSchema;
@@ -31,4 +33,4 @@ export type ExecutionUnitProps = {
         onUnitPostProcessorChanged: (postProcessor: string, enabled: boolean) => void;
     }>;
 };
-export declare function ExecutionUnit({ unit, renderingContext, onUpdate, adjustable, editable, isStandalone, materials, materialsIndex, onMaterialSwitch, units, UnitPointerFieldComponent, UnitDetailsComponent, }: ExecutionUnitProps): React.JSX.Element;
+export declare function ExecutionUnit({ unit, renderingContext, onUpdate, adjustable, editable, isStandalone, materials, materialsIndex, onMaterialSwitch, units, UnitPointerFieldComponent, UnitDetailsComponent, variableOriginOverrides, }: ExecutionUnitProps): React.JSX.Element;
