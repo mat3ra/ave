@@ -280,17 +280,6 @@ export function ExecutionUnit({
 
     return (
         <Stack spacing={2} className="ExecutionUnit" sx={{ py: 2 }}>
-            <Stack className="ExecutionUnit-Stack" direction="column" spacing={2}>
-                {UnitPointerFieldComponent && unitPointerKeys.map((key) => (
-                    <UnitPointerFieldComponent
-                        key={key}
-                        label={key}
-                        selectedValue={unit[key] ?? ""}
-                        availableUnits={availableUnits()}
-                        onChange={(value) => handleUnitKeyUpdate(key, value)}
-                    />
-                ))}
-            </Stack>
             <AccordionComponent
                 className="ExecutionUnit-Accordion"
                 id="execution-unit-details-accordion"
@@ -421,6 +410,30 @@ export function ExecutionUnit({
                     </SideDrawer>
                 </DrawerContainer>
             </AccordionComponent>
+            {/*
+                Execution order is a wiring detail, not what someone opens a unit to change: it
+                used to sit above everything, so the first thing the input editor showed was a
+                pointer to another unit. It keeps its place in the form, at the end and collapsed.
+            */}
+            {UnitPointerFieldComponent && (
+                <AccordionComponent
+                    className="ExecutionUnit-Accordion"
+                    id="execution-unit-advanced-accordion"
+                    header="Advanced"
+                    disableGutters>
+                    <Stack className="ExecutionUnit-Stack" direction="column" spacing={2}>
+                        {unitPointerKeys.map((key) => (
+                            <UnitPointerFieldComponent
+                                key={key}
+                                label={key}
+                                selectedValue={unit[key] ?? ""}
+                                availableUnits={availableUnits()}
+                                onChange={(value) => handleUnitKeyUpdate(key, value)}
+                            />
+                        ))}
+                    </Stack>
+                </AccordionComponent>
+            )}
         </Stack>
     );
 }
