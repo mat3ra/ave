@@ -24,7 +24,8 @@
         "copy-css": "mkdir -p dist/stylesheets && cp src/stylesheets/* dist/stylesheets/ 2>/dev/null || true",
         "transpile": "tsc",
         "test": "TSX_TSCONFIG_PATH=tests/tsconfig.json node --import tsx --test tests/*.tests.ts",
-        "lint": "eslint src tests && prettier --check src tests"
+        "lint": "eslint src tests && prettier --check src tests",
+        "prepublishOnly": "npm run transpile"
     },
     "dependencies": {
         "@mat3ra/ade": "*"
