@@ -3,7 +3,7 @@ import JSONSchemasInterface from "@mat3ra/esse/dist/js/esse/JSONSchemasInterface
 import esseSchemas from "@mat3ra/esse/dist/js/schemas.json";
 import type { JSONSchema7 } from "json-schema";
 import type { ExecutionUnitSchema } from "@mat3ra/esse/dist/js/types";
-import { ApplicationDriver } from "@mat3ra/standata/dist/js/ApplicationDriver";
+import StandataDriver from "@mat3ra/standata/dist/js/StandataDriver";
 import { ApplicationRegistry } from "@mat3ra/standata";
 import { MaterialStandata } from "@mat3ra/standata/dist/js/material";
 import { ExecutionUnit as WodeExecutionUnit } from "@mat3ra/wode";
@@ -25,7 +25,7 @@ import { ExecutionUnit } from "../components/ExecutionUnit";
 JSONSchemasInterface.setSchemas(esseSchemas as unknown as JSONSchema7[]);
 
 // Bootstrap the standata application registry once
-const applicationDriver = new ApplicationDriver();
+const applicationDriver = new StandataDriver();
 ApplicationRegistry.setDriver(applicationDriver);
 const registry = new ApplicationRegistry();
 
