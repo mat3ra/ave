@@ -255,7 +255,10 @@ export function ExecutionUnit({
     const handleUnitKeyUpdate = useCallback(
         (key: string, value: unknown) => {
             const unitInstance = new ExecutionUnitEntity(unit);
-            unitInstance.setProp(key, value);
+            unitInstance.setProp(
+                key as Parameters<typeof unitInstance.setProp>[0],
+                value as Parameters<typeof unitInstance.setProp>[1],
+            );
             onUpdate(unitInstance.toJSON());
         },
         [unit, onUpdate],
