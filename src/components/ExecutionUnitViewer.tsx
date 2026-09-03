@@ -5,6 +5,7 @@ import {
     refreshCodeMirror,
 } from "@mat3ra/code/dist/js/utils";
 
+import type { PropertyHolderSchema } from "@mat3ra/esse/dist/js/types";
 import { ExecutionUnit } from "@mat3ra/wode";
 import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
@@ -23,11 +24,7 @@ type ExecutionUnitInstance = InstanceType<typeof ExecutionUnit>;
 
 type ExecutionUnitInputRow = ExecutionUnitInstance["input"][number];
 
-type JobPropertyForMonitors = {
-    source: { info: { jobId: string; unitId: string } };
-    repetition: number;
-    data: { name: string };
-};
+type JobPropertyForMonitors = Pick<PropertyHolderSchema, "source" | "data" | "repetition">;
 
 type UnitOutputModule = typeof UnitOutput & {
     connectTracker?: () => React.ComponentType<UnitOutputTrackedProps>;
@@ -39,6 +36,7 @@ type UnitOutputTrackedProps = {
     onOutputUpdateRequest: (flowchartId: string, skip: number, limit: number) => void;
 };
 
+// Charts still resolves its monitors here; that path has its own jobId defect, tracked separately.
 function getMonitorsFromProperties(
     unit: any,
     jobProperties: readonly JobPropertyForMonitors[] | null | undefined,
@@ -64,8 +62,8 @@ export type ExecutionUnitViewerProps = {
     jobProperties: readonly JobPropertyForMonitors[];
     /** Current job ID; used for monitor filtering. */
     jobId?: string;
-    jupyterNotebookUrl?: string;
-    jupyterLabUrl?: string;
+    /** Notebook and lab URLs for this unit's repetition, resolved upstream by @mat3ra/jode. */
+    jupyterUrls?: { notebookUrl: string; labUrl: string };
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
         monitors: { name: string }[];
@@ -110,8 +108,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         onOutputUpdateRequest,
         jobProperties,
         jobId,
-        jupyterNotebookUrl,
-        jupyterLabUrl,
+        jupyterUrls,
         ConvergencesListComponent,
     } = props;
     const [activeTabId, setActiveTabId] = useState("output");
@@ -148,8 +145,8 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
     let jupyterNotebookHref: string | undefined;
 
     if (isJupyter && unit.status === UnitStatus.active) {
-        jupyterNotebookHref = jupyterNotebookUrl;
-        jupyterLabHref = jupyterLabUrl;
+        jupyterNotebookHref = jupyterUrls?.notebookUrl;
+        jupyterLabHref = jupyterUrls?.labUrl;
     }
 
     const tabs: TabItem[] = [
