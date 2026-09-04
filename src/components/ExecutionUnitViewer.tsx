@@ -5,6 +5,7 @@ import {
     refreshCodeMirror,
 } from "@mat3ra/code/dist/js/utils";
 
+import type { PropertyHolderSchema } from "@mat3ra/esse/dist/js/types";
 import { ExecutionUnit } from "@mat3ra/wode";
 import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
@@ -13,11 +14,7 @@ import setClass from "classnames";
 import React, { useMemo, useState } from "react";
 
 import { executionUnitHasConvergenceMonitor } from "../utils/executionUnitMonitors";
-import {
-    type JupyterNotebookEndpointJobProperty,
-    isJupyterExecutionUnit,
-    resolveJupyterNotebookAndLabUrls,
-} from "../utils/jupyterExecutionUnit";
+import { isJupyterExecutionUnit } from "../utils/jupyterExecutionUnit";
 import { UnitOutput } from "./UnitOutput";
 
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
@@ -27,8 +24,7 @@ type ExecutionUnitInstance = InstanceType<typeof ExecutionUnit>;
 
 type ExecutionUnitInputRow = ExecutionUnitInstance["input"][number];
 
-/** Job-bound property rows (convergence + Jupyter endpoint share this envelope). */
-type JobPropertyForMonitors = JupyterNotebookEndpointJobProperty;
+type JobPropertyForMonitors = Pick<PropertyHolderSchema, "source" | "data" | "repetition">;
 
 type UnitOutputModule = typeof UnitOutput & {
     connectTracker?: () => React.ComponentType<UnitOutputTrackedProps>;
@@ -40,6 +36,7 @@ type UnitOutputTrackedProps = {
     onOutputUpdateRequest: (flowchartId: string, skip: number, limit: number) => void;
 };
 
+// Charts still resolves its monitors here; that path has its own jobId defect, tracked separately.
 function getMonitorsFromProperties(
     unit: any,
     jobProperties: readonly JobPropertyForMonitors[] | null | undefined,
@@ -63,8 +60,10 @@ export type ExecutionUnitViewerProps = {
     unit: any;
     onOutputUpdateRequest: (flowchartId: string, skip: number, limit: number) => void;
     jobProperties: readonly JobPropertyForMonitors[];
-    /** Current job ID; used for Jupyter URL resolution and monitor filtering. Pass from route context in webapp; omit in standalone. */
+    /** Current job ID; used for monitor filtering. */
     jobId?: string;
+    /** Notebook and lab URLs for this unit's repetition, resolved upstream by @mat3ra/jode. */
+    jupyterUrls?: { notebookUrl: string; labUrl: string };
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
         monitors: { name: string }[];
@@ -96,14 +95,22 @@ function renderExecutionFile(
         <Box
             key={String(tabId)}
             id={String(tabId)}
-            className={setClass(isActive ? "active" : "hidden")}>
+            className={setClass(isActive ? "active" : "hidden")}
+        >
             <CodeMirror content={file.rendered} language={language} options={options} readOnly />
         </Box>
     );
 }
 
 export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
-    const { unit, onOutputUpdateRequest, jobProperties, jobId, ConvergencesListComponent } = props;
+    const {
+        unit,
+        onOutputUpdateRequest,
+        jobProperties,
+        jobId,
+        jupyterUrls,
+        ConvergencesListComponent,
+    } = props;
     const [activeTabId, setActiveTabId] = useState("output");
     const [activeFileTabIndex, setActiveFileTabIndex] = useState(0);
 
@@ -138,15 +145,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
     let jupyterNotebookHref: string | undefined;
 
     if (isJupyter && unit.status === UnitStatus.active) {
-        const jupyterUrls = jobId
-            ? resolveJupyterNotebookAndLabUrls(
-                  jobId,
-                  unit.flowchartId,
-                  unit.repetition,
-                  jobProperties,
-              )
-            : undefined;
-        jupyterNotebookHref = jupyterUrls?.notebookTreeUrl;
+        jupyterNotebookHref = jupyterUrls?.notebookUrl;
         jupyterLabHref = jupyterUrls?.labUrl;
     }
 
@@ -210,7 +209,8 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 overflow="hidden"
                 display={activeTabIndex !== 0 ? "none" : undefined}
                 className={getActiveClassByTab("input")}
-                id={`${unit.flowchartId}-input`}>
+                id={`${unit.flowchartId}-input`}
+            >
                 <TabsMenu tabs={fileTabs} activeTabIndex={activeFileTabIndex} />
                 <Box overflow="auto" flex={1}>
                     {unit.input.map((file: ExecutionUnitInputRow, index: number) => {
@@ -224,7 +224,8 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 <Stack
                     overflow="hidden"
                     className={getActiveClassByTab("output")}
-                    id={`${unit.flowchartId}-output`}>
+                    id={`${unit.flowchartId}-output`}
+                >
                     <TabsMenu
                         tabs={[
                             {
@@ -250,7 +251,8 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 <Stack
                     overflow="hidden"
                     className={getActiveClassByTab("charts")}
-                    id={`${unit.flowchartId}-charts`}>
+                    id={`${unit.flowchartId}-charts`}
+                >
                     <ConvergencesListComponent
                         monitors={monitors}
                         idPrefix={unit.flowchartId}
