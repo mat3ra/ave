@@ -14,6 +14,11 @@ import { uniqBy } from "lodash";
 import getValue from "lodash/get";
 import uniq from "lodash/uniq";
 import React, { useCallback, useMemo, useState } from "react";
+import {
+    getApplicationByBuild,
+    getApplicationByVersion,
+    getDefaultApplicationByName,
+} from "../utils/applicationSelection";
 
 type SelectSelector = {
     id: string;
@@ -102,20 +107,7 @@ export function Application({
 
     const onNameSelect = (name: string) => {
         const applications = registry.getApplications();
-        const matchingApps = applications.filter((app) => app.name === name);
-
-        if (!matchingApps.length) return;
-
-        const newApplication =
-            // default version + default build present
-            matchingApps.find((app) => app.isDefaultVersion && app.isDefault) ||
-            // default version present, isDefault missing/false
-            matchingApps.find((app) => app.isDefaultVersion) ||
-            // isDefault present, isDefaultVersion missing/false
-            matchingApps.find((app) => app.isDefault) ||
-            // fallback to first application entry
-            matchingApps[0];
-
+        const newApplication = getDefaultApplicationByName(applications, name);
         if (newApplication) {
             onApplicationUpdate(newApplication);
         }
@@ -128,15 +120,7 @@ export function Application({
         const { name } = application;
         const applications = registry.getApplications();
 
-        // Get all builds for this name and version
-        const versionApps = applications.filter(
-            (app) => app.name === name && app.version === version
-        );
-
-        // Prefer the default build for this version, fallback to the first build
-        const newApplication =
-            versionApps.find((app) => app.isDefault) || versionApps[0];
-
+        const newApplication = getApplicationByVersion(applications, name, version ? version : "");
         if (newApplication) {
             onApplicationUpdate(newApplication);
         }
@@ -146,9 +130,7 @@ export function Application({
         const { name, version } = application;
         const applications = registry.getApplications();
 
-        const newApplication = applications.find((app) => {
-            return app.name === name && app.version === version && app.build === build;
-        });
+        const newApplication = getApplicationByBuild(applications, name, version, build);
         if (newApplication) {
             onApplicationUpdate(newApplication);
         }
