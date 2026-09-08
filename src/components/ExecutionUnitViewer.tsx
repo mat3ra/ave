@@ -7,14 +7,13 @@ import {
 
 import type { PropertyHolderSchema } from "@mat3ra/esse/dist/js/types";
 import { ExecutionUnit } from "@mat3ra/wode";
-import { UnitStatus } from "@mat3ra/wode/dist/js/enums";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import setClass from "classnames";
 import React, { useMemo, useState } from "react";
 
 import { executionUnitHasConvergenceMonitor } from "../utils/executionUnitMonitors";
-import { isJupyterExecutionUnit } from "../utils/jupyterExecutionUnit";
+import { buildExtraTabItems, type ExtraTab } from "../utils/extraTabs";
 import { UnitOutput } from "./UnitOutput";
 
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
@@ -62,8 +61,12 @@ export type ExecutionUnitViewerProps = {
     jobProperties: readonly JobPropertyForMonitors[];
     /** Current job ID; used for monitor filtering. */
     jobId?: string;
-    /** Notebook and lab URLs for this unit's repetition, resolved upstream by @mat3ra/jode. */
-    jupyterUrls?: { notebookUrl: string; labUrl: string };
+    /**
+     * Tabs this unit publishes on top of the built-in ones, resolved upstream. What they say and
+     * where they point is the caller's; the viewer decides only how they are presented — they
+     * link out of the application rather than switching an inner panel.
+     */
+    extraTabs?: readonly ExtraTab[];
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
         monitors: { name: string }[];
@@ -108,7 +111,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         onOutputUpdateRequest,
         jobProperties,
         jobId,
-        jupyterUrls,
+        extraTabs,
         ConvergencesListComponent,
     } = props;
     const [activeTabId, setActiveTabId] = useState("output");
@@ -138,16 +141,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         });
     });
 
-    const isJupyter = isJupyterExecutionUnit(unit);
     const hasConvergenceMonitor = executionUnitHasConvergenceMonitor(unit);
-
-    let jupyterLabHref: string | undefined;
-    let jupyterNotebookHref: string | undefined;
-
-    if (isJupyter && unit.status === UnitStatus.active) {
-        jupyterNotebookHref = jupyterUrls?.notebookUrl;
-        jupyterLabHref = jupyterUrls?.labUrl;
-    }
 
     const tabs: TabItem[] = [
         {
@@ -169,24 +163,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         },
     ];
 
-    if (isJupyter) {
-        tabs.push({
-            id: "notebook",
-            className: "",
-            itemName: "Notebook",
-            href: jupyterNotebookHref,
-            target: "_blank",
-            iconCls: "pages.externalLink",
-        });
-        tabs.push({
-            id: "lab",
-            className: "",
-            itemName: "Lab",
-            href: jupyterLabHref,
-            target: "_blank",
-            iconCls: "pages.externalLink",
-        });
-    }
+    tabs.push(...buildExtraTabItems(extraTabs));
 
     if (hasConvergenceMonitor) {
         tabs.push({
@@ -207,7 +184,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
             <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} variant="fullWidth" />
             <Stack
                 overflow="hidden"
-                display={activeTabIndex !== 0 ? "none" : undefined}
+                display={isTabActive("input") ? undefined : "none"}
                 className={getActiveClassByTab("input")}
                 id={`${unit.flowchartId}-input`}
             >
@@ -220,7 +197,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 </Box>
             </Stack>
 
-            {activeTabIndex === 1 ? (
+            {isTabActive("output") ? (
                 <Stack
                     overflow="hidden"
                     className={getActiveClassByTab("output")}
@@ -247,7 +224,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                 </Stack>
             ) : null}
 
-            {hasConvergenceMonitor && ConvergencesListComponent && activeTabIndex === 2 ? (
+            {hasConvergenceMonitor && ConvergencesListComponent && isTabActive("charts") ? (
                 <Stack
                     overflow="hidden"
                     className={getActiveClassByTab("charts")}
