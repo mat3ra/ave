@@ -61,10 +61,7 @@ export type ExecutionUnitViewerProps = {
     jobProperties: readonly JobPropertyForMonitors[];
     /** Current job ID; used for monitor filtering. */
     jobId?: string;
-    /**
-     * Endpoints this unit serves while it runs, resolved upstream in the job domain. The viewer
-     * decides how they appear — currently one outbound tab each.
-     */
+    /** Endpoints this unit serves while it runs; shown as one outbound tab each. */
     unitEndpoints?: readonly UnitEndpoint[];
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
