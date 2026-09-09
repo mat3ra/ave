@@ -13,7 +13,7 @@ import setClass from "classnames";
 import React, { useMemo, useState } from "react";
 
 import { executionUnitHasConvergenceMonitor } from "../utils/executionUnitMonitors";
-import { buildExtraTabItems, type ExtraTab } from "../utils/extraTabs";
+import { buildEndpointTabItems, type UnitEndpoint } from "../utils/unitEndpoints";
 import { UnitOutput } from "./UnitOutput";
 
 import TabsMenu from "@mat3ra/cove/dist/mui/components/tabs/TabsMenu";
@@ -62,11 +62,10 @@ export type ExecutionUnitViewerProps = {
     /** Current job ID; used for monitor filtering. */
     jobId?: string;
     /**
-     * Tabs this unit publishes on top of the built-in ones, resolved upstream. What they say and
-     * where they point is the caller's; the viewer decides only how they are presented — they
-     * link out of the application rather than switching an inner panel.
+     * Endpoints this unit serves while it runs, resolved upstream in the job domain. The viewer
+     * decides how they appear — currently one outbound tab each.
      */
-    extraTabs?: readonly ExtraTab[];
+    unitEndpoints?: readonly UnitEndpoint[];
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
         monitors: { name: string }[];
@@ -111,7 +110,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         onOutputUpdateRequest,
         jobProperties,
         jobId,
-        extraTabs,
+        unitEndpoints,
         ConvergencesListComponent,
     } = props;
     const [activeTabId, setActiveTabId] = useState("output");
@@ -163,7 +162,7 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         },
     ];
 
-    tabs.push(...buildExtraTabItems(extraTabs));
+    tabs.push(...buildEndpointTabItems(unitEndpoints));
 
     if (hasConvergenceMonitor) {
         tabs.push({
