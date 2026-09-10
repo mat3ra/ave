@@ -35,18 +35,19 @@ type UnitOutputTrackedProps = {
     onOutputUpdateRequest: (flowchartId: string, skip: number, limit: number) => void;
 };
 
-// Charts still resolves its monitors here; that path has its own jobId defect, tracked separately.
-function getMonitorsFromProperties(
+// `jobId` is optional: callers pass properties already scoped to one job, so requiring it here
+// left Charts empty for every unit. Still compared when given.
+export function getMonitorsFromProperties(
     unit: any,
     jobProperties: readonly JobPropertyForMonitors[] | null | undefined,
     jobId: string | undefined,
 ): { name: string }[] {
-    if (!jobProperties || !Array.isArray(jobProperties) || !jobId) {
+    if (!jobProperties || !Array.isArray(jobProperties)) {
         return [];
     }
     const properties = jobProperties.filter((p) => {
         return (
-            p.source.info.jobId === jobId &&
+            (!jobId || p.source.info.jobId === jobId) &&
             p.source.info.unitId === unit.flowchartId &&
             p.repetition === unit.repetition &&
             unit.monitorNames.includes(p.data.name)
