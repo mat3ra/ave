@@ -10,7 +10,7 @@ import { ExecutionUnit } from "@mat3ra/wode";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import setClass from "classnames";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { executionUnitHasConvergenceMonitor } from "../utils/executionUnitMonitors";
 import { buildEndpointTabItems, type UnitEndpoint } from "../utils/unitEndpoints";
@@ -24,16 +24,6 @@ type ExecutionUnitInstance = InstanceType<typeof ExecutionUnit>;
 type ExecutionUnitInputRow = ExecutionUnitInstance["input"][number];
 
 type JobPropertyForMonitors = Pick<PropertyHolderSchema, "source" | "data" | "repetition">;
-
-type UnitOutputModule = typeof UnitOutput & {
-    connectTracker?: () => React.ComponentType<UnitOutputTrackedProps>;
-};
-
-type UnitOutputTrackedProps = {
-    id: string;
-    unit: ExecutionUnitInstance;
-    onOutputUpdateRequest: (flowchartId: string, skip: number, limit: number) => void;
-};
 
 // `jobId` is optional: callers pass properties already scoped to one job, so requiring it here
 // left Charts empty for every unit. Still compared when given.
@@ -64,6 +54,8 @@ export type ExecutionUnitViewerProps = {
     jobId?: string;
     /** Endpoints this unit serves while it runs; shown as one outbound tab each. */
     unitEndpoints?: readonly UnitEndpoint[];
+    /** Stdout of this unit, already joined; shown in the Output tab. */
+    output?: string;
     /** Injected component for rendering convergence charts. */
     ConvergencesListComponent?: React.ComponentType<{
         monitors: { name: string }[];
@@ -109,15 +101,11 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
         jobProperties,
         jobId,
         unitEndpoints,
+        output = "",
         ConvergencesListComponent,
     } = props;
     const [activeTabId, setActiveTabId] = useState("output");
     const [activeFileTabIndex, setActiveFileTabIndex] = useState(0);
-
-    const UnitOutputComponent = useMemo(() => {
-        const UO = UnitOutput as UnitOutputModule;
-        return UO.connectTracker ? UO.connectTracker() : UnitOutput;
-    }, []);
 
     const isTabActive = (tab: string) => tab === activeTabId;
     const getActiveClassByTab = (tab: string) => (isTabActive(tab) ? "active" : "");
@@ -213,9 +201,10 @@ export function ExecutionUnitViewer(props: ExecutionUnitViewerProps) {
                         centered
                     />
 
-                    <UnitOutputComponent
+                    <UnitOutput
                         id={`${unit.flowchartId}-output-stdout`}
                         unit={unit}
+                        output={output}
                         onOutputUpdateRequest={onOutputUpdateRequest}
                     />
                 </Stack>
