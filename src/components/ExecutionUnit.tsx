@@ -1,4 +1,5 @@
 import Accordion from "@mat3ra/cove/dist/mui/components/accordion";
+import IconByName from "@mat3ra/cove/dist/mui/components/icon/IconByName";
 const AccordionComponent = Accordion as any;
 import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
 import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
@@ -9,6 +10,7 @@ import type { AnySubworkflowUnit } from "@mat3ra/wode/dist/js/units/factory";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Radio from "@mui/material/Radio";
@@ -164,6 +166,35 @@ export function ExecutionUnit({
             });
         },
         [unit, onUpdate],
+    );
+
+    const onUnitInputAdd = useCallback(() => {
+        onUpdate({
+            ...unit,
+            input: [
+                ...unit.input,
+                {
+                    template: {
+                        name: "new_file.txt",
+                        content: "",
+                        contextProviders: [],
+                        applicationName: unit.application.name,
+                        applicationVersion: unit.application.version,
+                        executableName: unit.executable.name,
+                    },
+                    isManuallyChanged: true,
+                },
+            ],
+        });
+        setActiveTabIndex(unit.input.length);
+    }, [unit, onUpdate]);
+
+    const onUnitInputDelete = useCallback(
+        (index: number) => {
+            onUpdate({ ...unit, input: unit.input.filter((_, i) => i !== index) });
+            if (activeTabIndex >= index) setActiveTabIndex(Math.max(0, activeTabIndex - 1));
+        },
+        [unit, onUpdate, activeTabIndex],
     );
 
     const onUnitIsDraftChanged = useCallback(
@@ -331,11 +362,25 @@ export function ExecutionUnit({
                 className="ExecutionUnit-Accordion unit-input-editor">
                 <DrawerContainer>
                     <MainContent>
-                        <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} />
+                        <Stack direction="row" alignItems="center">
+                            <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} />
+                            {editable && (
+                                <>
+                                    <IconButton onClick={onUnitInputAdd}>
+                                        <IconByName name="actions.add" />
+                                    </IconButton>
+                                    <IconButton
+                                        disabled={unit.input.length <= 1}
+                                        onClick={() => onUnitInputDelete(activeTabIndex)}>
+                                        <IconByName name="actions.delete" />
+                                    </IconButton>
+                                </>
+                            )}
+                        </Stack>
 
                         {unit.input.map((inputRow: ExecutionUnitInput, index: number) => (
                             <ExecutionUnitInputFilePanel
-                                key={`${unit.flowchartId}-input-${inputRow.template.name}`}
+                                key={`${unit.flowchartId}-input-${index}-${inputRow.template.name}`}
                                 index={index}
                                 input={inputRow}
                                 isActive={index === activeTabIndex}
