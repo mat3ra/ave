@@ -205,14 +205,12 @@ export function ExecutionUnit({
         setActiveTabIndex(unit.input.length);
     }, [unit, onUpdate]);
 
-    const flavorInputFileNames = useMemo(() => {
+    const flavorInputFileCount = useMemo(() => {
         try {
-            return new ApplicationRegistry()
-                .getInput(unit.application, unit.flavor)
-                .map((template) => template.name);
+            return new ApplicationRegistry().getInput(unit.application, unit.flavor).length;
         } catch {
             // getInput throws for an application or flavor standata no longer declares.
-            return [];
+            return 0;
         }
     }, [unit.application, unit.flavor]);
 
@@ -399,7 +397,7 @@ export function ExecutionUnit({
                                     <IconButton
                                         disabled={
                                             unit.input.length <= 1 ||
-                                            activeTabIndex < flavorInputFileNames.length
+                                            activeTabIndex < flavorInputFileCount
                                         }
                                         onClick={() => onUnitInputDelete(activeTabIndex)}>
                                         <IconByName name="actions.delete" />
