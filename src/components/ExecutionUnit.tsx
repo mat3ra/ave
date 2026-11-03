@@ -122,8 +122,9 @@ export function ExecutionUnit({
             if (renderingContext) {
                 try {
                     rendered = renderTextWithSubstitutes(content, renderingContext);
-                } catch (error) {
-                    console.warn("Template render error:", error);
+                } catch {
+                    // A template using mat3ra nunjucks filters renders only in wode's
+                    // environment, not this one; the previous `rendered` stands.
                 }
             }
             onUpdate({
@@ -179,13 +180,18 @@ export function ExecutionUnit({
     );
 
     const onUnitInputAdd = useCallback(() => {
+        const takenFileNames = unit.input.map((row) => row.template.name);
+        let newFileName = "new_file.txt";
+        for (let index = 2; takenFileNames.includes(newFileName); index += 1) {
+            newFileName = `new_file_${index}.txt`;
+        }
         onUpdate({
             ...unit,
             input: [
                 ...unit.input,
                 {
                     template: {
-                        name: "new_file.txt",
+                        name: newFileName,
                         content: "",
                         contextProviders: [],
                         applicationName: unit.application.name,
@@ -393,9 +399,7 @@ export function ExecutionUnit({
                                     <IconButton
                                         disabled={
                                             unit.input.length <= 1 ||
-                                            flavorInputFileNames.includes(
-                                                unit.input[activeTabIndex]?.template.name ?? "",
-                                            )
+                                            activeTabIndex < flavorInputFileNames.length
                                         }
                                         onClick={() => onUnitInputDelete(activeTabIndex)}>
                                         <IconByName name="actions.delete" />
