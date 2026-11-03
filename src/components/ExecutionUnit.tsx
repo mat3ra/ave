@@ -5,6 +5,7 @@ import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
 import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
 import { type NameResultSchema, safeMakeObject } from "@mat3ra/code/dist/js/utils/object";
 import type { ExecutionUnitSchema, RuntimeItemSchema } from "@mat3ra/esse/dist/js/types";
+import { ApplicationRegistry } from "@mat3ra/standata";
 import { type OrderedMaterial, ExecutionUnit as ExecutionUnitEntity } from "@mat3ra/wode";
 import type { AnySubworkflowUnit } from "@mat3ra/wode/dist/js/units/factory";
 import Box from "@mui/material/Box";
@@ -15,7 +16,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Application } from "./Application";
 import {
@@ -117,6 +118,14 @@ export function ExecutionUnit({
 
     const onUnitInputContentUpdate = useCallback(
         (index: number, content: string) => {
+            let rendered: string | undefined;
+            if (renderingContext) {
+                try {
+                    rendered = renderTextWithSubstitutes(content, renderingContext);
+                } catch (error) {
+                    console.warn("Template render error:", error);
+                }
+            }
             onUpdate({
                 ...unit,
                 input: unit.input.map((row, i) =>
@@ -124,13 +133,14 @@ export function ExecutionUnit({
                         ? {
                               ...row,
                               template: { ...row.template, content },
+                              rendered: rendered ?? row.rendered,
                               isManuallyChanged: true,
                           }
                         : row,
                 ),
             });
         },
-        [unit, onUpdate],
+        [unit, onUpdate, renderingContext],
     );
 
     const onUnitInputNameUpdate = useCallback(
@@ -179,7 +189,7 @@ export function ExecutionUnit({
                         content: "",
                         contextProviders: [],
                         applicationName: unit.application.name,
-                        applicationVersion: unit.application.version,
+                        applicationVersion: "*",
                         executableName: unit.executable.name,
                     },
                     isManuallyChanged: true,
@@ -188,6 +198,17 @@ export function ExecutionUnit({
         });
         setActiveTabIndex(unit.input.length);
     }, [unit, onUpdate]);
+
+    const flavorInputFileNames = useMemo(() => {
+        try {
+            return new ApplicationRegistry()
+                .getInput(unit.application, unit.flavor)
+                .map((template) => template.name);
+        } catch {
+            // getInput throws for an application or flavor standata no longer declares.
+            return [];
+        }
+    }, [unit.application, unit.flavor]);
 
     const onUnitInputDelete = useCallback(
         (index: number) => {
@@ -370,7 +391,12 @@ export function ExecutionUnit({
                                         <IconByName name="actions.add" />
                                     </IconButton>
                                     <IconButton
-                                        disabled={unit.input.length <= 1}
+                                        disabled={
+                                            unit.input.length <= 1 ||
+                                            flavorInputFileNames.includes(
+                                                unit.input[activeTabIndex]?.template.name ?? "",
+                                            )
+                                        }
                                         onClick={() => onUnitInputDelete(activeTabIndex)}>
                                         <IconByName name="actions.delete" />
                                     </IconButton>
