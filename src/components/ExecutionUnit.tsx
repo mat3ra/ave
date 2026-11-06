@@ -123,8 +123,7 @@ export function ExecutionUnit({
                 try {
                     rendered = renderTextWithSubstitutes(content, renderingContext);
                 } catch {
-                    // A template using mat3ra nunjucks filters renders only in wode's
-                    // environment, not this one; the previous `rendered` stands.
+                    // mat3ra nunjucks filters resolve only in wode's environment.
                 }
             }
             onUpdate({
@@ -192,8 +191,6 @@ export function ExecutionUnit({
                 {
                     template: {
                         name: newFileName,
-                        // Required by the template schema, and an empty string reads as "not
-                        // provided" to the validator, which strips it and then rejects the save.
                         content: "\n",
                         contextProviders: [],
                         applicationName: unit.application.name,
