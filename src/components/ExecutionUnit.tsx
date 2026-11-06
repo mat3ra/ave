@@ -192,7 +192,9 @@ export function ExecutionUnit({
                 {
                     template: {
                         name: newFileName,
-                        content: "",
+                        // Required by the template schema, and an empty string reads as "not
+                        // provided" to the validator, which strips it and then rejects the save.
+                        content: "\n",
                         contextProviders: [],
                         applicationName: unit.application.name,
                         applicationVersion: "*",
