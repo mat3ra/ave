@@ -30,10 +30,10 @@ type ExecutionUnitInputFilePanelProps = {
 
 const codeMirrorDefaults: Record<string, unknown> = {
     lineNumbers: true,
-    mode: "jinja2",
     autofocus: false,
-    viewportMargin: Infinity,
     minHeight: 70,
+    // leaves Ctrl/Cmd+F to the browser's own find
+    searchKeymap: false,
 };
 
 export function ExecutionUnitInputFilePanel({
