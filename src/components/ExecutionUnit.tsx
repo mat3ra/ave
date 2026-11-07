@@ -333,6 +333,10 @@ export function ExecutionUnit({
             onLabelChange: (newLabel: string) => {
                 onUnitInputNameUpdate(index, newLabel);
             },
+            onDelete:
+                editable && unit.input.length > 1 && index >= flavorInputFileCount
+                    ? () => onUnitInputDelete(index)
+                    : undefined,
         };
     });
 
@@ -389,19 +393,9 @@ export function ExecutionUnit({
                         <Stack direction="row" alignItems="center">
                             <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} />
                             {editable && (
-                                <>
-                                    <IconButton onClick={onUnitInputAdd}>
-                                        <IconByName name="actions.add" />
-                                    </IconButton>
-                                    <IconButton
-                                        disabled={
-                                            unit.input.length <= 1 ||
-                                            activeTabIndex < flavorInputFileCount
-                                        }
-                                        onClick={() => onUnitInputDelete(activeTabIndex)}>
-                                        <IconByName name="actions.delete" />
-                                    </IconButton>
-                                </>
+                                <IconButton onClick={onUnitInputAdd}>
+                                    <IconByName name="actions.add" />
+                                </IconButton>
                             )}
                         </Stack>
 
