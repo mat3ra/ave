@@ -32,8 +32,6 @@ const codeMirrorDefaults: Record<string, unknown> = {
     lineNumbers: true,
     autofocus: false,
     minHeight: 70,
-    // leaves Ctrl/Cmd+F to the browser's own find
-    searchKeymap: false,
 };
 
 export function ExecutionUnitInputFilePanel({
