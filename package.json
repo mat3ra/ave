@@ -42,7 +42,7 @@
     },
     "license": "Apache-2.0",
     "devDependencies": {
-        "@mat3ra/cove": "2026.8.19-4",
+        "@mat3ra/cove": "https://github.com/mat3ra/cove/releases/download/wip-ed58421/cove.tgz",
         "@emotion/babel-plugin": "^11.11.0",
         "@emotion/react": "^11.11.0",
         "@emotion/styled": "^11.11.0",
