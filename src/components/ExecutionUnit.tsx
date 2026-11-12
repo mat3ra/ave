@@ -1,19 +1,22 @@
 import Accordion from "@mat3ra/cove/dist/mui/components/accordion";
+import IconByName from "@mat3ra/cove/dist/mui/components/icon/IconByName";
 const AccordionComponent = Accordion as any;
 import { refreshCodeMirror } from "@mat3ra/code/dist/js/utils";
 import { renderTextWithSubstitutes } from "@mat3ra/code/dist/js/utils/str";
 import { type NameResultSchema, safeMakeObject } from "@mat3ra/code/dist/js/utils/object";
 import type { ExecutionUnitSchema, RuntimeItemSchema } from "@mat3ra/esse/dist/js/types";
+import { ApplicationRegistry } from "@mat3ra/standata";
 import { type OrderedMaterial, ExecutionUnit as ExecutionUnitEntity } from "@mat3ra/wode";
 import type { AnySubworkflowUnit } from "@mat3ra/wode/dist/js/units/factory";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Radio from "@mui/material/Radio";
 import Stack from "@mui/material/Stack";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Application } from "./Application";
 import {
@@ -115,6 +118,14 @@ export function ExecutionUnit({
 
     const onUnitInputContentUpdate = useCallback(
         (index: number, content: string) => {
+            let rendered: string | undefined;
+            if (renderingContext) {
+                try {
+                    rendered = renderTextWithSubstitutes(content, renderingContext);
+                } catch {
+                    // mat3ra nunjucks filters resolve only in wode's environment.
+                }
+            }
             onUpdate({
                 ...unit,
                 input: unit.input.map((row, i) =>
@@ -122,13 +133,14 @@ export function ExecutionUnit({
                         ? {
                               ...row,
                               template: { ...row.template, content },
+                              rendered: rendered ?? row.rendered,
                               isManuallyChanged: true,
                           }
                         : row,
                 ),
             });
         },
-        [unit, onUpdate],
+        [unit, onUpdate, renderingContext],
     );
 
     const onUnitInputNameUpdate = useCallback(
@@ -164,6 +176,49 @@ export function ExecutionUnit({
             });
         },
         [unit, onUpdate],
+    );
+
+    const onUnitInputAdd = useCallback(() => {
+        const takenFileNames = unit.input.map((row) => row.template.name);
+        let newFileName = "new_file.txt";
+        for (let index = 2; takenFileNames.includes(newFileName); index += 1) {
+            newFileName = `new_file_${index}.txt`;
+        }
+        onUpdate({
+            ...unit,
+            input: [
+                ...unit.input,
+                {
+                    template: {
+                        name: newFileName,
+                        content: "\n",
+                        contextProviders: [],
+                        applicationName: unit.application.name,
+                        applicationVersion: "*",
+                        executableName: unit.executable.name,
+                    },
+                    isManuallyChanged: true,
+                },
+            ],
+        });
+        setActiveTabIndex(unit.input.length);
+    }, [unit, onUpdate]);
+
+    const flavorInputFileCount = useMemo(() => {
+        try {
+            return new ApplicationRegistry().getInput(unit.application, unit.flavor).length;
+        } catch {
+            // getInput throws for an application or flavor standata no longer declares.
+            return 0;
+        }
+    }, [unit.application, unit.flavor]);
+
+    const onUnitInputDelete = useCallback(
+        (index: number) => {
+            onUpdate({ ...unit, input: unit.input.filter((_, i) => i !== index) });
+            if (activeTabIndex >= index) setActiveTabIndex(Math.max(0, activeTabIndex - 1));
+        },
+        [unit, onUpdate, activeTabIndex],
     );
 
     const onUnitIsDraftChanged = useCallback(
@@ -278,6 +333,10 @@ export function ExecutionUnit({
             onLabelChange: (newLabel: string) => {
                 onUnitInputNameUpdate(index, newLabel);
             },
+            onDelete:
+                editable && unit.input.length > 1 && index >= flavorInputFileCount
+                    ? () => onUnitInputDelete(index)
+                    : undefined,
         };
     });
 
@@ -331,11 +390,18 @@ export function ExecutionUnit({
                 className="ExecutionUnit-Accordion unit-input-editor">
                 <DrawerContainer>
                     <MainContent>
-                        <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} />
+                        <Stack direction="row" alignItems="center">
+                            <TabsMenu tabs={tabs} activeTabIndex={activeTabIndex} />
+                            {editable && (
+                                <IconButton onClick={onUnitInputAdd}>
+                                    <IconByName name="actions.add" />
+                                </IconButton>
+                            )}
+                        </Stack>
 
                         {unit.input.map((inputRow: ExecutionUnitInput, index: number) => (
                             <ExecutionUnitInputFilePanel
-                                key={`${unit.flowchartId}-input-${inputRow.template.name}`}
+                                key={`${unit.flowchartId}-input-${index}-${inputRow.template.name}`}
                                 index={index}
                                 input={inputRow}
                                 isActive={index === activeTabIndex}
