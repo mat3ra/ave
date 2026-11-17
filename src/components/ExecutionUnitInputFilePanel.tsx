@@ -30,9 +30,7 @@ type ExecutionUnitInputFilePanelProps = {
 
 const codeMirrorDefaults: Record<string, unknown> = {
     lineNumbers: true,
-    mode: "jinja2",
     autofocus: false,
-    viewportMargin: Infinity,
     minHeight: 70,
 };
 
